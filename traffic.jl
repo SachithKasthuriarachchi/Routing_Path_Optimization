@@ -10,9 +10,9 @@ A=[1 -1 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
 0 0 0 0 0 0 0 0 0 0 0 0 -1 1 1 -1 0 0]
 
 f14 = 2;
-f26 = 7;
-f36 = 6;
-f61 = 8;
+f26 = 5;
+f36 = 7;
+f61 = 6;
 
 gamma = f14+f26+f36+f61;
 
@@ -98,7 +98,7 @@ x6 = Variable(18,1);
 
 t = x1 + x4 + x6;
 
-problem3 = minimize(sum(dot(/)(10/gamma,10-t))-18)
+problem3 = minimize(sum(dot(/)(10/gamma,10-t))-18/gamma)
 problem3.constraints += [
     A * x1 == s1,
     A * x4 == s4,
@@ -131,7 +131,7 @@ x6 = Variable(18,1);
 
 t = x1 + x4 + x6;
 
-problem4 = minimize(maximum(dot(/)(10/gamma,10-t)-1))
+problem4 = minimize(maximum(dot(/)(10/gamma,10-t)-1/gamma))
 problem4.constraints += [
     A * x1 == s1,
     A * x4 == s4,
@@ -178,7 +178,7 @@ problem5.constraints += [
     x6 >= 0,
     t>=0,
     t <= 10,
-    dot(/)(10/gamma,10-t)-1 <=optimum_delay
+    dot(/)(10/gamma,10-t)-1/gamma <=optimum_delay
     ];
 
 solve!(problem5, solver)
@@ -212,7 +212,7 @@ problem6.constraints += [
     x6 >= 0,
     t>=0,
     t <= 10,
-    dot(/)(10/gamma,10-t)-1 <=optimum_delay
+    dot(/)(10/gamma,10-t)-1/gamma <=optimum_delay
     ];
 
 solve!(problem6, solver)
@@ -236,7 +236,7 @@ x6 = Variable(18,1);
 
 t = x1 + x4 + x6;
 
-problem7 = minimize(sum(dot(/)(10/gamma,10-t))-18)
+problem7 = minimize(sum(dot(/)(10/gamma,10-t))-18/gamma)
 problem7.constraints += [
     A * x1 == s1,
     A * x4 == s4,
@@ -270,7 +270,7 @@ x6 = Variable(18,1);
 
 t = x1 + x4 + x6;
 
-problem8 = minimize(maximum(dot(/)(10/gamma,10-t)-1))
+problem8 = minimize(maximum(dot(/)(10/gamma,10-t)-1/gamma))
 problem8.constraints += [
     A * x1 == s1,
     A * x4 == s4,
@@ -305,11 +305,11 @@ println(round.(dot(/)(evaluate(t)/gamma,10 .-evaluate(t)), digits=2))
 
 ## Graph
 
-
 f=[]
 g=[]
 
-for lambda = 0:0.0001:1
+# increse step for a smoother graph
+for lambda = 0:0.1:1
 
     y1 = Variable(18,1);
     y4 = Variable(18,1);
@@ -317,7 +317,7 @@ for lambda = 0:0.0001:1
 
     u = y1 + y4 + y6;
 
-    obj_func = minimize(lambda*(maximum(dot(/)(10,10-u)-1)) + (1-lambda)*(-minimum(u/10)))
+    obj_func = minimize(lambda*(maximum(dot(/)(10/gamma,10-u)-1/gamma)) + (1-lambda)*(-minimum(u/10)))
     obj_func.constraints += [
         A*y1 == s1,
         A*y4 == s4,
@@ -329,7 +329,7 @@ for lambda = 0:0.0001:1
         ];
 
     solve!(obj_func, solver)
-    push!(f,evaluate(maximum(dot(/)(10/gamma,10-u)-1)))
+    push!(f,evaluate(maximum(dot(/)(10/gamma,10-u)-1/gamma)))
     push!(g,evaluate(-minimum(u/10)))
 end
 
